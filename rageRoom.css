@@ -1,0 +1,40 @@
+body {
+    margin: 0;
+    background: #0f0f0f;
+    color: #ff004c;
+    font-family: 'Orbitron', 'Silkscreen', monospace;
+    overflow: hidden;
+  }
+  
+  .rage-nav {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+  }
+  
+  #exitBtn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #ff004c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 0 10px #ff004c99;
+    transition: transform 0.1s ease-in-out;
+  }
+  
+  #exitBtn:hover {
+    transform: scale(1.05);
+  }
+  
+  #canvas-wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  

@@ -1,30 +1,25 @@
-let isSmashed = false;
+// RAGE FEED SUBMISSION
+document.getElementById('submitRage').addEventListener('click', () => {
+    const text = document.querySelector('textarea').value.trim();
+    if (text.length === 0) return;
+  
+    const li = document.createElement('li');
+    li.textContent = text;
+    document.getElementById('feedList').prepend(li);
+    document.querySelector('textarea').value = '';
+  });
+  
+  // LEADERBOARD TOGGLE
+  const leaderboardBtn = document.getElementById('leaderboardToggle');
+  const leaderboardPanel = document.getElementById('leaderboardPanel');
+  
+  leaderboardBtn.addEventListener('click', () => {
+    leaderboardPanel.classList.toggle('hidden');
+  });
+  
+  // PLAY BUTTON → GO TO RAGE ROOM
+  document.getElementById('playBtn').addEventListener('click', () => {
+    window.location.href = "rageRoom.html";
+  });
+  
 
-function setup() {
-  createCanvas(600, 400);
-  background(20);
-}
-
-function draw() {
-  background(20);
-
-  // Laptop Body
-  if (!isSmashed) {
-    fill(100);
-    rect(200, 150, 200, 100); // screen
-    fill(80);
-    rect(200, 250, 200, 30);  // keyboard
-  } else {
-    fill(255, 0, 0);
-    textSize(24);
-    textAlign(CENTER, CENTER);
-    text("💥 SMASHED 💥", width / 2, height / 2);
-  }
-}
-
-function mousePressed() {
-  // If mouse is within laptop bounds, smash it
-  if (mouseX > 200 && mouseX < 400 && mouseY > 150 && mouseY < 280) {
-    isSmashed = true;
-  }
-}

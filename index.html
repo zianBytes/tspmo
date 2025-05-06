@@ -1,19 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TSPMO – Virtual Rage Room</title>
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TSPMO - Online Rage Room</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Fonts: Glitch and Punk vibes -->
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Space+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Ts pmo 💔🥀 </h1>
-    <p>Click the object below to release some rage:</p>
+  <!-- 🔥 Sticky Navigation -->
+  <nav class="top-bar">
+    <button id="playBtn">▶️ PLAY</button>
+    <button id="leaderboardToggle">🏆 LEADERBOARD</button>
+  </nav>
+  
+  <!-- 🧠 Leaderboard Drop-down -->
+  <section id="leaderboardPanel" class="hidden">
+    <h2>Top Ragers of the Week</h2>
+    <ul>
+      <li>@angryEgg123 – 89 smashes</li>
+      <li>@cryinginbio – 75 vents</li>
+      <li>@capitalism_killer – 69 🔥</li>
+    </ul>
+  </section>
 
-    <main>
-        <!-- Rage Room Canvas will be here -->
-        <script src="libs/p5.min.js"></script>
-        <script src="script.js"></script>
-    </main>
+  <!-- ✨ Glitch Header -->
+  <header>
+    <h1 class="glitch">TS PMO 💔🥀</h1>
+    <p class="subtext">Virtual Fucking Rage Room 💣</p>
+  </header>
+
+  <!-- 💬 Gen Z Brainrot Ticker -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <div class="ticker-track">
+        <p>
+          TS PMO SYBAU GNG 💔🥀 &nbsp;&nbsp;&nbsp;
+          FIne shyt didn't reply 😭 &nbsp;&nbsp;&nbsp;
+          I'm soooo coooked 🥴 &nbsp;&nbsp;&nbsp;
+          My AirPods died during a breakdown 🎧💀 &nbsp;&nbsp;&nbsp;
+          Already on my 300th "kms" today 🚗💨 &nbsp;&nbsp;&nbsp;
+          GURLL bffr 😒 &nbsp;&nbsp;&nbsp;
+          “We’re like a family here” — unpaid labor unlocked 👨‍👩‍👧‍👧🔓 &nbsp;&nbsp;&nbsp;
+          I studied 7 hours for a 32% 📉📚 &nbsp;&nbsp;&nbsp;
+          Rent was due 3 days ago. So was my will to live 🏚️☠️ &nbsp;&nbsp;&nbsp;
+          Skipped lunch, bought iced coffee instead 🧊☕💸 &nbsp;&nbsp;&nbsp;
+        </p>
+        <p>
+          I asked for a raise and got a pizza party 🍕😭 &nbsp;&nbsp;&nbsp;
+          Why is oat milk $6.99?? 😭🥛 &nbsp;&nbsp;&nbsp;
+          Just cried in a Duane Reade bathroom 🚽😔 &nbsp;&nbsp;&nbsp;
+          Logged off for mental health. Logged back on bc I’m nosy 👁️📱 &nbsp;&nbsp;&nbsp;
+          I thought it was Friday but it was Tuesday 😐🕳️ &nbsp;&nbsp;&nbsp;
+          This GPA is powered by vibes and trauma 🎓💥 &nbsp;&nbsp;&nbsp;
+          $7 left in my bank account and vibes immaculate 🤑✨ &nbsp;&nbsp;&nbsp;
+          Can’t afford therapy but I journal like a menace 📓😮‍💨 &nbsp;&nbsp;&nbsp;
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔥 Rage Submission -->
+  <div class="rage-input">
+    <p class="disclaimer">Rage out. With or without context. This isn’t therapy.</p>
+    <textarea id="rageText" maxlength="140" placeholder="Why are you raging right now?"></textarea>
+    <button id="submitRage">Let it out 💥</button>
+  </div>
+
+  <!-- 🧯 Live Rage Feed -->
+  <div class="rage-feed">
+    <h2>Live Rage Feed</h2>
+    <ul id="feedList">
+      <!-- Rage messages will appear here -->
+    </ul>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="script.js"></script>
 </body>
 </html>

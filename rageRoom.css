@@ -4,7 +4,7 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #808080;
+    background: #000;
 }
 
 #webglContainer {
@@ -14,27 +14,242 @@ html, body {
     width: 100%;
     height: 100%;
     z-index: 1;
+    border: 2px solid #ff4d4d;
+    box-sizing: border-box;
+    background: #000;
 }
 
-canvas {
-    display: block !important;
+#webglContainer canvas {
+    display: block;
     width: 100% !important;
     height: 100% !important;
 }
-  
+
+/* Game UI Elements */
+#gameUI {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    display: none;
+}
+
+#crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+    pointer-events: none;
+}
+
+#controls {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 30px 40px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000;
+    font-family: 'Space Mono', monospace;
+    backdrop-filter: blur(10px);
+    border: 2px solid #ff4d4d;
+    box-shadow: 0 0 30px rgba(255, 77, 77, 0.3);
+    min-width: 300px;
+    display: none;
+}
+
+#controls h3 {
+    font-family: 'Silkscreen', monospace;
+    color: #ff4d4d;
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+}
+
+#controls p {
+    margin: 15px 0;
+    font-size: 16px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-shadow: 0 0 6px rgba(0, 255, 242, 0.3);
+}
+
+#controls .key {
+    background: rgba(255, 77, 77, 0.2);
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-family: 'Silkscreen', monospace;
+    color: #ff4d4d;
+    border: 1px solid rgba(255, 77, 77, 0.3);
+    min-width: 80px;
+    text-align: center;
+    margin-right: 15px;
+    text-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+}
+
+#timer {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+}
+
+#score {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    color: white;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+}
+
+#message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 20px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: none;
+}
+
 #exitBtn {
     position: fixed;
-    top: 1rem;
-    left: 1rem;
-    padding: 0.5rem 1rem;
-    background: white;
-    color: #eb3131;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
     border: none;
-    border-radius: 6px;
-    font-family: 'Arial', sans-serif;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 4;
+    font-size: 18px;
+}
+
+#exitBtn:hover {
+    background: rgba(255, 0, 0, 0.8);
+}
+
+/* ========== LEADERBOARD ========== */
+#leaderboard {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 250px;
+    background: rgba(0, 0, 0, 0.85);
+    border-radius: 10px;
+    color: white;
+    z-index: 1050;
+    font-family: 'Space Mono', monospace;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+#leaderboardHeader {
+    padding: 15px;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#leaderboardHeader:hover {
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1));
+}
+
+#leaderboardContent {
+    max-height: 0;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+#leaderboardContent.show {
+    max-height: 300px;
+}
+
+.leaderboard-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideIn 0.3s ease forwards;
+    animation-delay: calc(var(--item-index) * 0.1s);
+    opacity: 0;
+}
+
+.leaderboard-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.player-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rank {
+    color: #ff3333;
+    font-weight: bold;
+}
+
+.score {
+    color: #ffcc00;
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#controlsBtn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: 2px solid #ff4d4d;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
     z-index: 1000;
-    box-shadow: 0 0 10px #ff4d4d80;
+    font-family: 'Silkscreen', monospace;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+#controlsBtn:hover {
+    background: rgba(255, 77, 77, 0.2);
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
 }
   
     

@@ -12,9 +12,25 @@ document.getElementById('submitRage').addEventListener('click', () => {
   // LEADERBOARD TOGGLE
   const leaderboardBtn = document.getElementById('leaderboardToggle');
   const leaderboardPanel = document.getElementById('leaderboardPanel');
+  let isLeaderboardOpen = false;
   
   leaderboardBtn.addEventListener('click', () => {
-    leaderboardPanel.classList.toggle('hidden');
+    isLeaderboardOpen = !isLeaderboardOpen;
+    leaderboardPanel.classList.toggle('show');
+    leaderboardBtn.style.color = isLeaderboardOpen ? '#ff4d4d' : '#00fff2';
+    leaderboardBtn.style.textShadow = isLeaderboardOpen ? '0 0 10px #ff4d4d' : '0 0 6px #00fff2';
+  });
+  
+  // Close leaderboard when clicking outside
+  document.addEventListener('click', (event) => {
+    if (isLeaderboardOpen && 
+        !leaderboardPanel.contains(event.target) && 
+        !leaderboardBtn.contains(event.target)) {
+        isLeaderboardOpen = false;
+        leaderboardPanel.classList.remove('show');
+        leaderboardBtn.style.color = '#00fff2';
+        leaderboardBtn.style.textShadow = '0 0 6px #00fff2';
+    }
   });
   
   // PLAY BUTTON → GO TO RAGE ROOM

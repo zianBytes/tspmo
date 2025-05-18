@@ -1,40 +1,40 @@
-body {
+html, body {
     margin: 0;
-    background: #0f0f0f;
-    color: #ff004c;
-    font-family: 'Orbitron', 'Silkscreen', monospace;
+    padding: 0;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-  }
-  
-  .rage-nav {
+    background: #808080;
+}
+
+#webglContainer {
     position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 10;
-  }
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+canvas {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+}
   
-  #exitBtn {
-    padding: 10px 20px;
-    font-size: 1rem;
-    background: #ff004c;
-    color: white;
+#exitBtn {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.5rem 1rem;
+    background: white;
+    color: #eb3131;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
+    font-family: 'Arial', sans-serif;
     cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 0 10px #ff004c99;
-    transition: transform 0.1s ease-in-out;
-  }
+    z-index: 1000;
+    box-shadow: 0 0 10px #ff4d4d80;
+}
   
-  #exitBtn:hover {
-    transform: scale(1.05);
-  }
-  
-  #canvas-wrapper {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
+    

@@ -3,27 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Rage Room</title>
+  <title>RAGE ROOM 3D</title>
   <link rel="stylesheet" href="rageRoom.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Silkscreen&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #000000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    #webglContainer {
+      position: relative;
+      width: 90vw;
+      height: 80vh;
+      background: #000000;
+      border: 2px solid #333;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    #exitBtn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #ff3333;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 1050;
+      transition: background 0.3s ease;
+    }
+
+    #exitBtn:hover {
+      background: #ff0000;
+    }
+  </style>
 </head>
 <body>
-
-  <!-- 🔙 Exit to Homepage -->
-  <nav class="rage-nav">
-    <button id="exitBtn">← EXIT</button>
-  </nav>
-
-  <!-- 🔲 Rage Canvas -->
-  <main>
-    <div id="canvas-wrapper">
-      <!-- p5.js canvas goes here -->
-    </div>
-  </main>
-
-  <!-- SCRIPTS -->
-  <script src="libs/p5.min.js"></script>
-  <script src="libs/p5.sound.js"></script>
+  <div id="webglContainer"></div>
+  <button id="exitBtn" onclick="window.location.href='./index.html'">← EXIT</button>
+  
+  <!-- Load Three.js first -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.1/three.min.js"></script>
+  
+  <!-- Then load our scene code -->
   <script src="rageRoom.js"></script>
 </body>
 </html>
+

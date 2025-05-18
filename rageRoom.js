@@ -1,63 +1,128 @@
-let isSmashed = false;
-let smashSound;
-let shakeAmount = 0;
+// Wait for window load to ensure all scripts are ready
+window.addEventListener('load', function() {
+    try {
+        // Basic Three.js setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000);
+        
+        // Camera setup
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 1.6, 5); // Position camera at average human height
+        
+        // Renderer setup
+        const container = document.getElementById('webglContainer');
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true,
+            alpha: true
+        });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
 
-function preload() {
-  smashSound = loadSound('assets/sounds/smash1.mp3');
-}
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambientLight);
 
-function setup() {
-  let cnv = createCanvas(windowWidth, windowHeight);
-  cnv.parent('canvas-wrapper'); // attach canvas to div
-//   noCursor();
-}
+        const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        mainLight.position.set(5, 5, 5);
+        mainLight.castShadow = true;
+        scene.add(mainLight);
 
-function draw() {
-  if (shakeAmount > 0) {
-    translate(random(-shakeAmount, shakeAmount), random(-shakeAmount, shakeAmount));
-    shakeAmount -= 0.5;
-  }
+        // Add some point lights for atmosphere
+        const pointLight1 = new THREE.PointLight(0xffffff, 0.5);
+        pointLight1.position.set(-3, 3, 0);
+        scene.add(pointLight1);
 
-  background(20);
+        const pointLight2 = new THREE.PointLight(0xffffff, 0.5);
+        pointLight2.position.set(3, 3, 0);
+        scene.add(pointLight2);
 
-  if (!isSmashed) {
-    fill(100);
-    rect(width/2 - 100, height/2 - 50, 200, 100); // screen
-    fill(80);
-    rect(width/2 - 100, height/2 + 50, 200, 30);  // keyboard
-  } else {
-    fill(60);
-    rect(width/2 - 100, height/2 - 50, 200, 100);
-    fill(50);
-    rect(width/2 - 100, height/2 + 50, 200, 30);
+        // Create room
+        function createRoom() {
+            const roomGeometry = {
+                width: 10,
+                height: 8,
+                depth: 10
+            };
 
-    stroke(255, 0, 0);
-    strokeWeight(2);
-    line(width/2 - 80, height/2 - 40, width/2 + 80, height/2 + 30);
-    line(width/2, height/2 - 40, width/2, height/2 + 30);
-    line(width/2 + 50, height/2 - 40, width/2 - 20, height/2 + 30);
+            const wallMaterial = new THREE.MeshStandardMaterial({
+                color: 0x808080,
+                roughness: 0.8,
+                metalness: 0.2,
+                side: THREE.DoubleSide
+            });
 
-    noStroke();
-    fill(255, 0, 0);
-    textAlign(CENTER);
-    textSize(24);
-    text("💥 YOU SNAPPED 💥", width / 2, 80);
-  }
-}
+            // Floor
+            const floorGeometry = new THREE.PlaneGeometry(roomGeometry.width, roomGeometry.depth);
+            const floor = new THREE.Mesh(floorGeometry, wallMaterial);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.y = 0;
+            floor.receiveShadow = true;
+            scene.add(floor);
 
-function mousePressed() {
-  const xStart = width / 2 - 100;
-  const xEnd = width / 2 + 100;
-  const yStart = height / 2 - 50;
-  const yEnd = height / 2 + 80;
+            // Ceiling
+            const ceiling = new THREE.Mesh(floorGeometry, wallMaterial);
+            ceiling.rotation.x = Math.PI / 2;
+            ceiling.position.y = roomGeometry.height;
+            ceiling.receiveShadow = true;
+            scene.add(ceiling);
 
-  if (!isSmashed && mouseX > xStart && mouseX < xEnd && mouseY > yStart && mouseY < yEnd) {
-    isSmashed = true;
-    if (smashSound) smashSound.play();
-    shakeAmount = 10;
-  }
-}
+            // Back wall
+            const backWallGeometry = new THREE.PlaneGeometry(roomGeometry.width, roomGeometry.height);
+            const backWall = new THREE.Mesh(backWallGeometry, wallMaterial);
+            backWall.position.z = -roomGeometry.depth / 2;
+            backWall.position.y = roomGeometry.height / 2;
+            backWall.receiveShadow = true;
+            scene.add(backWall);
 
-document.getElementById('exitBtn')?.addEventListener('click', () => {
-  window.location.href = "index.html";
+            // Side walls
+            const sideWallGeometry = new THREE.PlaneGeometry(roomGeometry.depth, roomGeometry.height);
+            
+            // Left wall
+            const leftWall = new THREE.Mesh(sideWallGeometry, wallMaterial);
+            leftWall.position.x = -roomGeometry.width / 2;
+            leftWall.position.y = roomGeometry.height / 2;
+            leftWall.rotation.y = Math.PI / 2;
+            leftWall.receiveShadow = true;
+            scene.add(leftWall);
+
+            // Right wall
+            const rightWall = new THREE.Mesh(sideWallGeometry, wallMaterial);
+            rightWall.position.x = roomGeometry.width / 2;
+            rightWall.position.y = roomGeometry.height / 2;
+            rightWall.rotation.y = -Math.PI / 2;
+            rightWall.receiveShadow = true;
+            scene.add(rightWall);
+        }
+
+        createRoom();
+
+        // Handle window resize
+        function onWindowResize() {
+            const container = document.getElementById('webglContainer');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+        
+        window.addEventListener('resize', onWindowResize);
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        // Start animation
+        animate();
+        
+    } catch (error) {
+        console.error('Three.js error:', error);
+    }
 });
+
+
+

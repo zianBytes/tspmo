@@ -43,13 +43,13 @@ window.addEventListener('load', function() {
         console.log('Camera initialized at position:', camera.position);
 
         // Check if PointerLockControls is available
-        if (typeof THREE.PointerLockControls === 'undefined') {
+        if (typeof PointerLockControls === 'undefined') {
             throw new Error('PointerLockControls not loaded! Check script dependencies.');
         }
         console.log('PointerLockControls available');
 
         // Initialize controls
-        const controls = new THREE.PointerLockControls(camera, document.body);
+        const controls = new PointerLockControls(camera, document.body);
         console.log('Controls initialized');
 
         // Add event listeners for pointer lock
@@ -82,67 +82,30 @@ window.addEventListener('load', function() {
         scene.add(directionalLight);
         console.log('Directional light added');
 
-        // Movement state
-        const moveState = {
-            forward: false,
-            backward: false,
-            left: false,
-            right: false,
-            shift: false
-        };
-
-        const moveSpeed = 0.15;
-
-        // Add event listeners for movement
-        document.addEventListener('keydown', (event) => {
-            switch (event.code) {
-                case 'KeyW': moveState.forward = true; break;
-                case 'KeyS': moveState.backward = true; break;
-                case 'KeyA': moveState.left = true; break;
-                case 'KeyD': moveState.right = true; break;
-                case 'ShiftLeft': moveState.shift = true; break;
-                case 'Space':
-                    if (!controls.isLocked) {
-                        controls.lock();
-                        startGame();
-                    }
-                    break;
-            }
-        });
-
-        document.addEventListener('keyup', (event) => {
-            switch (event.code) {
-                case 'KeyW': moveState.forward = false; break;
-                case 'KeyS': moveState.backward = false; break;
-                case 'KeyA': moveState.left = false; break;
-                case 'KeyD': moveState.right = false; break;
-                case 'ShiftLeft': moveState.shift = false; break;
-            }
-        });
-
-        // Renderer setup with better shadows
+        // Texture loader and renderer setup
+        const textureLoader = new THREE.TextureLoader();
         const container = document.getElementById('webglContainer');
         if (!container) {
             throw new Error('WebGL container not found! Check HTML structure.');
         }
         console.log('WebGL container found');
 
-        // Check WebGL support
-        if (!THREE.WebGLRenderer.isWebGLAvailable()) {
-            throw new Error('WebGL not supported in this browser!');
-        }
-        console.log('WebGL support confirmed');
-
+        // Create renderer
         const renderer = new THREE.WebGLRenderer({ 
             antialias: true,
             alpha: true
         });
+
+        // Check if renderer was created successfully
+        if (!renderer) {
+            throw new Error('Failed to create WebGL renderer!');
+        }
         console.log('Renderer created');
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 5.0;
         console.log('Renderer settings configured');
@@ -157,25 +120,15 @@ window.addEventListener('load', function() {
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Texture loader
-        const textureLoader = new THREE.TextureLoader();
-
-        // Load textures with normal maps
-        const floorTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/hardwood2_diffuse.jpg');
-        const floorNormalMap = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/hardwood2_normal.jpg');
+        // Load textures with normal maps - using correct URLs
+        const floorTexture = textureLoader.load('https://threejs.org/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg');
+        const floorNormalMap = textureLoader.load('https://threejs.org/examples/textures/floors/FloorsCheckerboard_S_Normal.jpg');
         
-        const wallTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/brick_diffuse.jpg');
-        const wallNormalMap = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/brick_normal.jpg');
-        const wallRoughnessMap = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/brick_roughness.jpg');
-        
-        const crackTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/crate_normal.jpg');
-        const graffitiTexture = createGraffitiTexture();
-
         // Configure texture repeating
-        [floorTexture, floorNormalMap, wallTexture, wallNormalMap, wallRoughnessMap].forEach(texture => {
-            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-            texture.repeat.set(4, 4);
-        });
+        floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+        floorNormalMap.wrapS = floorNormalMap.wrapT = THREE.RepeatWrapping;
+        floorTexture.repeat.set(4, 4);
+        floorNormalMap.repeat.set(4, 4);
 
         // Add floor
         const floorGeometry = new THREE.PlaneGeometry(100, 100);
@@ -189,6 +142,45 @@ window.addEventListener('load', function() {
         floor.rotation.x = -Math.PI / 2;
         floor.receiveShadow = true;
         scene.add(floor);
+
+        // Movement state
+        const moveState = {
+            forward: false,
+            backward: false,
+            left: false,
+            right: false,
+            shift: false
+        };
+
+        const moveSpeed = 0.15;
+
+        // Add event listeners for movement
+        document.addEventListener('keydown', (event) => {
+            if (!controls.isLocked) {
+                if (event.code === 'Space') {
+                    controls.lock();
+                }
+                return;
+            }
+            
+            switch (event.code) {
+                case 'KeyW': moveState.forward = true; break;
+                case 'KeyS': moveState.backward = true; break;
+                case 'KeyA': moveState.left = true; break;
+                case 'KeyD': moveState.right = true; break;
+                case 'ShiftLeft': moveState.shift = true; break;
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            switch (event.code) {
+                case 'KeyW': moveState.forward = false; break;
+                case 'KeyS': moveState.backward = false; break;
+                case 'KeyA': moveState.left = false; break;
+                case 'KeyD': moveState.right = false; break;
+                case 'ShiftLeft': moveState.shift = false; break;
+            }
+        });
 
         // Add collision detection
         const raycaster = new THREE.Raycaster();
@@ -1056,22 +1048,10 @@ window.addEventListener('load', function() {
             if (controls.isLocked) {
                 const actualMoveSpeed = moveSpeed * (moveState.shift ? 2 : 1);
 
-                // Store previous position
-                const previousPosition = camera.position.clone();
-
-                // Apply movement
                 if (moveState.forward) controls.moveForward(actualMoveSpeed);
                 if (moveState.backward) controls.moveForward(-actualMoveSpeed);
                 if (moveState.left) controls.moveRight(-actualMoveSpeed);
                 if (moveState.right) controls.moveRight(actualMoveSpeed);
-
-                // Check collisions
-                checkCollision();
-
-                // If collision detected, revert to previous position
-                if (camera.position.y < 1.8) {
-                    camera.position.copy(previousPosition);
-                }
             }
 
             // Update flickering lights
@@ -1080,14 +1060,6 @@ window.addEventListener('load', function() {
             // Update break effects if any
             if (gameState.breakEffects) {
                 gameState.breakEffects.forEach(effect => effect());
-            }
-
-            // Update hammer position if player has it
-            if (gameState.hasHammer && gameState.hammer) {
-                const hammerOffset = new THREE.Vector3(0.5, -0.3, -1);
-                hammerOffset.applyQuaternion(camera.quaternion);
-                gameState.hammer.position.copy(camera.position).add(hammerOffset);
-                gameState.hammer.quaternion.copy(camera.quaternion);
             }
 
             renderer.render(scene, camera);
